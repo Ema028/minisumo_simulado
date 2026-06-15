@@ -30,6 +30,8 @@ char*  Regiao                  (regiao r);
 int estado_id                  (regiao r, movimento m);
 void atualizar_q               (int estado_ant, acao acao_ant, int estado_atual, int recompensa);
 int escolher_acao              (int estado);
+void salvar_q_table            (char *arquivo);
+void carregar_q_table          (char *arquivo);
 void resetar_ambiente();
 void imprimir_q_table();
 
@@ -39,6 +41,7 @@ WbFieldRef robo_trans, robo_rot, caixa_trans;
 int main(int argc, char **argv){
   wb_robot_init();
   srand(time(NULL));
+  carregar_q_table("qtable.bin");
   
   int    tempo_decorrido = 0;
   double left_prev       = 0;
@@ -141,6 +144,7 @@ int main(int argc, char **argv){
       imprimir_q_table();
       printf("\nEP %d\n", episodios);
       printf("Vitórias: %d | Derrotas: %d\n\n", vitorias, derrotas);
+      salvar_q_table("qtable.bin");
     }
     
     estado_anterior = estado_id(regiao, mov);
@@ -173,6 +177,7 @@ int main(int argc, char **argv){
     }
     executar_acao(acao_atual, motor_esquerdo, motor_direito);*/
   };
+  salvar_q_table("qtable.bin");
   wb_robot_cleanup();
 
   return 0;
@@ -280,4 +285,30 @@ void imprimir_q_table(){
     }
     printf("\n");
   }
+}
+
+void salvar_q_table(char *arquivo){
+  FILE *f = fopen(arquivo, "wb");
+  if(f == NULL){
+    printf("arquivo não encontrado\n");
+    return;
+  }
+
+  fwrite(Q, sizeof(double), NUM_ESTADOS * NUM_ACOES, f);
+  fclose(f);
+
+  printf("tabela salva\n");
+}
+
+void carregar_q_table(char *arquivo){
+  FILE *f = fopen(arquivo, "rb");
+  if(f == NULL){
+    printf("arquivo não encontrado\n");
+    return;
+  }
+
+  fread(Q, sizeof(double), NUM_ESTADOS * NUM_ACOES, f);
+  fclose(f);
+
+  printf("tabela carregada.\n");
 }
