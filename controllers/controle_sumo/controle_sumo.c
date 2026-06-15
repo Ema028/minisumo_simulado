@@ -141,13 +141,13 @@ int main(int argc, char **argv){
       recompensa_tot = 0;
       acao_atual = FRENTE;
       continue; 
-    }
-    
-    if(episodios % 50 == 0){
-      imprimir_q_table();
-      printf("\nEP %d\n", episodios);
-      printf("Vitórias: %d | Derrotas: %d\n\n", vitorias, derrotas);
-      salvar_q_table("qtable.bin");
+      
+      if(episodios % 50 == 0){
+        imprimir_q_table();
+        printf("\nEP %d\n", episodios);
+        printf("Vitórias: %d | Derrotas: %d\n\n", vitorias, derrotas);
+        salvar_q_table("qtable.bin");
+      }
     }
     
     if(estado_anterior != -1)atualizar_q(estado_anterior, acao_anterior, estado_atual, recompensa);
@@ -274,7 +274,7 @@ void atualizar_q(int estado_ant, acao acao_ant, int estado_atual, int recompensa
 int escolher_acao(int estado){
   if(((double)rand() / RAND_MAX) < epsilon)return (rand() % NUM_ACOES);
 
-  int melhor = 0;
+  int melhor = rand() % NUM_ACOES;
   for(int i = 1; i < NUM_ACOES; i++){
     if(Q[estado][i] > Q[estado][melhor]) melhor = i;
   }
