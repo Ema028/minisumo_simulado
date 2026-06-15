@@ -243,9 +243,11 @@ void resetar_ambiente(){
   wb_supervisor_field_set_sf_vec3f (robo_trans, pos_inicial_robo);
   wb_supervisor_field_set_sf_rotation(robo_rot, rot_inicial_robo);
 
-  double random_x = ((double)(rand() % 4)) * 0.1 - 0.15;
-  double random_y = ((double)(rand() % 4)) * 0.1 - 0.15;
-  
+  double angulo = ((double)rand() / RAND_MAX) * 2.0 * M_PI;
+  double raio   = sqrt((double)rand() / RAND_MAX) * 0.25;
+
+  double random_x = raio * cos(angulo);
+  double random_y = raio * sin(angulo);
   const double pos_inicial_caixa[3] = {random_x, random_y, 0.06}; 
   wb_supervisor_field_set_sf_vec3f(caixa_trans, pos_inicial_caixa);
 
