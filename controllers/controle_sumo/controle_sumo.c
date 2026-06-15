@@ -12,6 +12,10 @@
 #define TIME_STEP 64
 #define NUM_ESTADOS 12  //4regiões, 3 movimentos
 #define NUM_ACOES 5
+#define ALPHA 0.1       //taxa aprendizado
+#define GAMMA 0.95      //desconto futuro
+
+double Q[NUM_ESTADOS][NUM_ACOES] = {0};
 
 typedef enum  {FRENTE, DIREITA, ESQUERDA, ROTACIONAR, TRAS,}acao;
 typedef enum  {CENTRO, MEIO, BORDA, FORA,}regiao;
@@ -24,8 +28,10 @@ movimento classificar_movimento(acao acao, double dL, double dR);
 regiao achar_regiao            (double distancia);
 char*  Regiao                  (regiao r);
 int estado_id                  (regiao r, movimento m);
-
+void atualizar_q               (int estado_ant, acao acao_ant, int estado_atual, int recompensa);
+int escolher_acao              (int estado);
 void resetar_ambiente();
+void imprimir_q_table();
 
 WbNodeRef robo, caixa;
 WbFieldRef robo_trans, robo_rot, caixa_trans;
@@ -62,10 +68,13 @@ int main(int argc, char **argv){
   wb_motor_set_position(motor_direito, INFINITY);
   
   acao acao_atual = FRENTE;
-  acao acoes[]    = {FRENTE, DIREITA, ESQUERDA, ROTACIONAR, TRAS,};
+  acao acao_anterior;
+  int estado_anterior;
   
   int episodios      = 0;
   int recompensa_tot = 0;
+  int vitorias       = 0;
+  int derrotas       = 0;
   
   while (wb_robot_step(TIME_STEP) != -1) {
     tempo_decorrido += TIME_STEP;
@@ -100,14 +109,16 @@ int main(int argc, char **argv){
     if (d_caixa > 0.40){
       recompensa = 100;
       acabou = true;
+      vitorias++;
       printf("CAIXA DERRUBADA\n");
     }else if (d_robo > 0.385){
       recompensa = -100;
       acabou = true;
+      derrotas++;
       printf("O ROBÔ CAIU\n");
     }else{
       if (acao_atual == FRENTE && mov == BLOQUEADO) {
-        recompensa = 2; 
+        recompensa = 5; 
       }else{
         recompensa = -1; 
       }
@@ -117,8 +128,8 @@ int main(int argc, char **argv){
 
     if (acabou){
       episodios++;
-      printf("Episódios: %d | Pontuação Total: %d\n\n", episodios, recompensa_tot);
-      
+      printf("Episódios: %d | Pontuação Total: %d\n", episodios, recompensa_tot);
+      printf("Vitórias:  %d | Derrotas:  %d\n\n", vitorias, derrotas);
       resetar_ambiente();
       
       recompensa_tot = 0;
@@ -126,7 +137,20 @@ int main(int argc, char **argv){
       continue; 
     }
     
-    if (regiao == BORDA && acao_atual != TRAS){
+    if(episodios % 50 == 0){
+      imprimir_q_table();
+      printf("\nEP %d\n", episodios);
+      printf("Vitórias: %d | Derrotas: %d\n\n", vitorias, derrotas);
+    }
+    
+    estado_anterior = estado_id(regiao, mov);
+    acao_atual      = escolher_acao(estado_anterior);
+    executar_acao(acao_atual, motor_esquerdo, motor_direito);
+    
+    int estado_atual = estado_id(regiao, mov);
+    acao_anterior    = acao_atual;
+    atualizar_q(estado_anterior, acao_anterior, estado_atual, recompensa);
+    /*if (regiao == BORDA && acao_atual != TRAS){
       acao_atual = TRAS;
       tempo_decorrido = 0;
     }else if (acao_atual == TRAS){
@@ -147,9 +171,8 @@ int main(int argc, char **argv){
         tempo_decorrido = 0; 
       }
     }
-    executar_acao(acao_atual, motor_esquerdo, motor_direito);
+    executar_acao(acao_atual, motor_esquerdo, motor_direito);*/
   };
-
   wb_robot_cleanup();
 
   return 0;
@@ -227,4 +250,34 @@ void resetar_ambiente(){
 
 int estado_id(regiao r, movimento m){
     return (r * 3) + m; 
+}
+
+void atualizar_q(int estado_ant, acao acao_ant, int estado_atual, int recompensa){
+  double max_q = Q[estado_atual][0];
+  for(int a = 1; a < NUM_ACOES; a++){
+    if(Q[estado_atual][a] > max_q) max_q = Q[estado_atual][a];
+  }
+  
+  Q[estado_ant][acao_ant] = Q[estado_ant][acao_ant] + ALPHA*(recompensa + GAMMA*max_q - Q[estado_ant][acao_ant]);
+}
+
+int escolher_acao(int estado){
+  double epsilon = 0.2;
+  if(((double)rand() / RAND_MAX) < epsilon)return (rand() % NUM_ACOES);
+
+  int melhor = 0;
+  for(int i = 1; i < NUM_ACOES; i++){
+    if(Q[estado][i] > Q[estado][melhor]) melhor = i;
+  }
+  return melhor;
+}
+
+void imprimir_q_table(){
+  for(int i = 0; i < NUM_ESTADOS; i++){
+    printf("Estado %2d : ", i);
+    for(int j = 0; j < NUM_ACOES; j++){
+      printf("%8.2f ", Q[i][j]);
+    }
+    printf("\n");
+  }
 }
