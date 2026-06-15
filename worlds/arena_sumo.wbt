@@ -1,0 +1,177 @@
+#VRML_SIM R2025a utf8
+
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/backgrounds/protos/TexturedBackground.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/backgrounds/protos/TexturedBackgroundLight.proto"
+
+WorldInfo {
+}
+Viewpoint {
+  orientation 0.04189303189210279 0.2360792906356654 -0.9708303365737229 0.3615784479286061
+  position -0.9413005909126657 0.35558134003029834 0.12847023010768002
+}
+TexturedBackground {
+}
+TexturedBackgroundLight {
+}
+Solid {
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColor 0 0 0
+        roughness 1
+      }
+      geometry Cylinder {
+        height 0.02
+        radius 0.385
+      }
+    }
+  ]
+  name "arena"
+  contactMaterial "carpet"
+  boundingObject Cylinder {
+    height 0.02
+    radius 0.385
+  }
+}
+DEF DEMOLIDOR Robot {
+  translation 0 0.1 0.06
+  children [
+    InertialUnit {
+      name "imu"
+    }
+    GPS {
+    }
+    HingeJoint {
+      jointParameters HingeJointParameters {
+        anchor -0.06 0 -0.02
+      }
+      device [
+        PositionSensor {
+          name "encoder dir"
+        }
+        RotationalMotor {
+          name "motor dir"
+        }
+      ]
+      endPoint Solid {
+        translation -0.06 0 -0.02
+        rotation 0 0 1 1.5708
+        children [
+          Pose {
+            rotation 1 0 0 1.5708
+            children [
+              Shape {
+                appearance PBRAppearance {
+                }
+                geometry Cylinder {
+                  height 0.015
+                  radius 0.015
+                }
+              }
+            ]
+          }
+        ]
+        name "roda_direita"
+        contactMaterial "rubber"
+        boundingObject Pose {
+          rotation 1 0 0 1.5708
+          children [
+            Cylinder {
+              height 0.015
+              radius 0.015
+            }
+          ]
+        }
+        physics Physics {
+          mass 0.05
+        }
+      }
+    }
+    HingeJoint {
+      jointParameters HingeJointParameters {
+        anchor 0.06 0 -0.02
+      }
+      device [
+        PositionSensor {
+          name "encoder esq"
+        }
+        RotationalMotor {
+          name "motor esq"
+        }
+      ]
+      endPoint Solid {
+        translation 0.06 0 -0.02
+        rotation 0 0 1 1.5708
+        children [
+          Pose {
+            rotation 1 0 0 1.5708
+            children [
+              Shape {
+                appearance PBRAppearance {
+                }
+                geometry Cylinder {
+                  height 0.015
+                  radius 0.015
+                }
+              }
+            ]
+          }
+        ]
+        name "roda_esquerda"
+        contactMaterial "rubber"
+        boundingObject Pose {
+          rotation 1 0 0 1.5708
+          children [
+            Cylinder {
+              height 0.015
+              radius 0.015
+            }
+          ]
+        }
+        physics Physics {
+          mass 0.05
+        }
+      }
+    }
+    Shape {
+      appearance PBRAppearance {
+        baseColor 1 0 0
+      }
+      geometry Box {
+        size 0.1 0.1 0.05
+      }
+    }
+  ]
+  name "demolidor"
+  boundingObject Box {
+    size 0.1 0.1 0.05
+  }
+  physics Physics {
+    mass 1.5
+  }
+  controller "controle_sumo"
+  controllerArgs [
+    ""
+  ]
+  supervisor TRUE
+}
+DEF CAIXA Solid {
+  translation 0 0 0.07
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColor 0 1 1
+      }
+      geometry Box {
+        size 0.1 0.1 0.05
+      }
+    }
+  ]
+  name "cubo"
+  boundingObject Box {
+    size 0.1 0.1 0.05
+  }
+  physics Physics {
+    mass 0.6
+  }
+}
