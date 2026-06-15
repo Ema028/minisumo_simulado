@@ -70,9 +70,9 @@ int main(int argc, char **argv){
   wb_motor_set_position(motor_esquerdo, INFINITY);
   wb_motor_set_position(motor_direito, INFINITY);
   
-  acao acao_atual = FRENTE;
   acao acao_anterior;
-  int estado_anterior;
+  acao acao_atual     = FRENTE;
+  int estado_anterior = -1;
   
   int episodios      = 0;
   int recompensa_tot = 0;
@@ -103,6 +103,7 @@ int main(int argc, char **argv){
     //printf("yaw=%f\n", yaw);
     
     movimento mov           = classificar_movimento(acao_atual, delta_left, delta_right);
+    int estado_atual        = estado_id(regiao, mov);
     const double *pos_caixa = wb_supervisor_field_get_sf_vec3f(caixa_trans);
     double d_caixa          = distancia_centro(pos_caixa[0], pos_caixa[1]);
     
@@ -147,13 +148,13 @@ int main(int argc, char **argv){
       salvar_q_table("qtable.bin");
     }
     
-    estado_anterior = estado_id(regiao, mov);
-    acao_atual      = escolher_acao(estado_anterior);
+    if(estado_anterior != -1)atualizar_q(estado_anterior, acao_anterior, estado_atual, recompensa);
+    
+    acao_atual = escolher_acao(estado_atual);
     executar_acao(acao_atual, motor_esquerdo, motor_direito);
     
-    int estado_atual = estado_id(regiao, mov);
-    acao_anterior    = acao_atual;
-    atualizar_q(estado_anterior, acao_anterior, estado_atual, recompensa);
+    estado_anterior = estado_atual;
+    acao_anterior   = acao_atual;
     /*if (regiao == BORDA && acao_atual != TRAS){
       acao_atual = TRAS;
       tempo_decorrido = 0;
