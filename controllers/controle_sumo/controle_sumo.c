@@ -37,6 +37,7 @@ void imprimir_q_table();
 
 WbNodeRef robo, caixa;
 WbFieldRef robo_trans, robo_rot, caixa_trans;
+double epsilon = 1.0;
 
 int main(int argc, char **argv){
   wb_robot_init();
@@ -132,6 +133,7 @@ int main(int argc, char **argv){
 
     if (acabou){
       episodios++;
+      if(epsilon > 0.05)epsilon *= 0.995;
       printf("Episódios: %d | Pontuação Total: %d\n", episodios, recompensa_tot);
       printf("Vitórias:  %d | Derrotas:  %d\n\n", vitorias, derrotas);
       resetar_ambiente();
@@ -270,7 +272,6 @@ void atualizar_q(int estado_ant, acao acao_ant, int estado_atual, int recompensa
 }
 
 int escolher_acao(int estado){
-  double epsilon = 0.2;
   if(((double)rand() / RAND_MAX) < epsilon)return (rand() % NUM_ACOES);
 
   int melhor = 0;
