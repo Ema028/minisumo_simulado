@@ -122,14 +122,15 @@ int main(int argc, char **argv){
       derrotas++;
       printf("O ROBÔ CAIU\n");
     }else{
-      if (acao_atual == FRENTE && mov == BLOQUEADO) {
-        recompensa = 5; 
-      }else{
-        recompensa = -1; 
-      }
+      if (acao_atual == FRENTE && mov == BLOQUEADO)recompensa = 5; 
+      else if(acao_atual == FRENTE && mov == LENTO)recompensa = 2;
+      else if(regiao == BORDA)recompensa = -3;
+      else recompensa = -1; 
     }
 
     recompensa_tot += recompensa;
+    
+    if(estado_anterior != -1)atualizar_q(estado_anterior, acao_anterior, estado_atual, recompensa);
 
     if (acabou){
       episodios++;
@@ -138,20 +139,19 @@ int main(int argc, char **argv){
       printf("Vitórias:  %d | Derrotas:  %d\n\n", vitorias, derrotas);
       resetar_ambiente();
       
-      recompensa_tot = 0;
-      acao_atual = FRENTE;
-      continue; 
+      recompensa_tot  = 0;
+      estado_anterior = -1;
+      acao_atual      = FRENTE;
       
       if(episodios % 50 == 0){
         imprimir_q_table();
-        printf("\nEP %d\n", episodios);
-        printf("Vitórias: %d | Derrotas: %d\n\n", vitorias, derrotas);
+        printf("Taxa de vitória: %.2f%%\n", 100.0 * vitorias /(vitorias + derrotas));
+        printf("Epsilon: %.3f\n", epsilon);
         salvar_q_table("qtable.bin");
       }
+      continue;
     }
-    
-    if(estado_anterior != -1)atualizar_q(estado_anterior, acao_anterior, estado_atual, recompensa);
-    
+   
     acao_atual = escolher_acao(estado_atual);
     executar_acao(acao_atual, motor_esquerdo, motor_direito);
     
