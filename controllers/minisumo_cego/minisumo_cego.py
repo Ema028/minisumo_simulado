@@ -12,18 +12,7 @@ POSICAO_INICIAL = (0, 0.1, -math.pi/2)
 
 
 def atualizar_odometria(x, y, theta, ds_esq, ds_dir):
-    ds = (ds_dir + ds_esq) / 2.0
-    dtheta = (ds_dir - ds_esq) / DIST_RODAS
-
-    x += ds * math.cos(theta + dtheta / 2.0)
-    y += ds * math.sin(theta + dtheta / 2.0)
-    theta += dtheta
-
-    #normalizar entre pi e -pi
-    theta = math.atan2(math.sin(theta), math.cos(theta))
-
-    return x, y, theta
-
+    ###COMPLETAR: calcular e retornar x, y e theta
 
 def main():
     robot = Robot()
@@ -53,12 +42,7 @@ def main():
     caiu = False
 
     while robot.step(timestep) != -1:
-        enc_esq_atual = enc_esq.getValue()
-        enc_dir_atual = enc_dir.getValue()
-        ds_esq = (enc_esq_atual - enc_esq_ant) * RAIO_RODA
-        ds_dir = (enc_dir_atual - enc_dir_ant) * RAIO_RODA
-        enc_esq_ant = enc_esq_atual   
-        enc_dir_ant = enc_dir_atual
+        ###COMPLETAR: ler encoders e calcular deslocamento rodas
 
         x, y, theta = atualizar_odometria(x, y, theta, ds_esq, ds_dir)
 
