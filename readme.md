@@ -5,6 +5,10 @@ Material da aula de **odometria** da capacitação de robótica. Um minisumo **c
 odometria dos encoders das rodas, e o GPS do Webots serve para mostrar o quanto
 a estimativa se afasta da realidade.
 
+## 🤖 Demonstração Prática
+
+![Demonstração do Minisumo Cego no Webots](demo.gif)
+
 ## 🌿 Branches
 
 | Branch | O que tem |
