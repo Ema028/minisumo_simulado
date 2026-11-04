@@ -6,8 +6,8 @@ EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/project
 WorldInfo {
 }
 Viewpoint {
-  orientation 0.04189303189210279 0.2360792906356654 -0.9708303365737229 0.3615784479286061
-  position -0.9413005909126657 0.35558134003029834 0.12847023010768002
+  orientation -0.028180680921845645 0.8048335105894298 0.5928312318485554 0.11798861782539963
+  position -0.7318444438117316 0.0021700568157415577 0.0892092339353793
 }
 TexturedBackground {
 }
@@ -34,7 +34,8 @@ Solid {
   }
 }
 DEF DEMOLIDOR Robot {
-  translation 0 0.1 0.06
+  translation -0.01969957982407048 0.12182398588524601 0.035719478810336505
+  rotation -0.03362641784505397 0.007663521760162425 -0.9994050902697772 0.422278677199086
   children [
     InertialUnit {
       name "imu"
@@ -43,7 +44,8 @@ DEF DEMOLIDOR Robot {
     }
     HingeJoint {
       jointParameters HingeJointParameters {
-        anchor -0.06 0 -0.02
+        position 1.0134561749241343e-08
+        anchor -0.06 0 -0.012
       }
       device [
         PositionSensor {
@@ -54,8 +56,8 @@ DEF DEMOLIDOR Robot {
         }
       ]
       endPoint Solid {
-        translation -0.06 0 -0.02
-        rotation 0 0 1 1.5708
+        translation -0.0599988 -2.9613047817771123e-06 -0.011999999999979956
+        rotation 1.7083549147765698e-07 9.509073356436181e-08 0.9999999999999808 1.570800005609948
         children [
           Pose {
             rotation 1 0 0 1.5708
@@ -89,7 +91,8 @@ DEF DEMOLIDOR Robot {
     }
     HingeJoint {
       jointParameters HingeJointParameters {
-        anchor 0.06 0 -0.02
+        position 7.65937841788161e-09
+        anchor 0.06 0 -0.012
       }
       device [
         PositionSensor {
@@ -100,8 +103,8 @@ DEF DEMOLIDOR Robot {
         }
       ]
       endPoint Solid {
-        translation 0.06 0 -0.02
-        rotation 0 0 1 1.5708
+        translation 0.0600008 -5.215399999999997e-07 -0.011999999999975763
+        rotation 2.605215457111693e-08 9.004226661401566e-09 0.9999999999999997 1.5708000001039686
         children [
           Pose {
             rotation 1 0 0 1.5708
@@ -149,29 +152,11 @@ DEF DEMOLIDOR Robot {
   physics Physics {
     mass 1.5
   }
-  controller "controle_sumo"
+  controller "minisumo_cego"
   controllerArgs [
     ""
   ]
   supervisor TRUE
-}
-DEF CAIXA Solid {
-  translation 0 0 0.07
-  children [
-    Shape {
-      appearance PBRAppearance {
-        baseColor 0 1 1
-      }
-      geometry Box {
-        size 0.1 0.1 0.05
-      }
-    }
-  ]
-  name "cubo"
-  boundingObject Box {
-    size 0.1 0.1 0.05
-  }
-  physics Physics {
-    mass 0.6
-  }
+  linearVelocity 0.0002331459662097062 -0.0005352083927675968 3.099437307034324e-05
+  angularVelocity 0.020450966987453228 0.008920726910053425 1.7822925230224284e-05
 }
